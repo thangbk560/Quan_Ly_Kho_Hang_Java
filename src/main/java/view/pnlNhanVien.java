@@ -6,12 +6,15 @@ package view;
 
 import controller.DatabaseConnection;
 import java.sql.*;
+import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
 import model.TaiKhoan;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 /**
  *
@@ -42,7 +45,7 @@ public class pnlNhanVien extends javax.swing.JPanel {
         DefaultTableModel model = (DefaultTableModel) tblNhanVien.getModel();
         TableRowSorter<TableModel> sorter = new TableRowSorter<>(model);
         tblNhanVien.setRowSorter(sorter);
-        model.setRowCount(0); // Xóa dữ liệu cũ trên bảng
+        model.setRowCount(0);
 
         try (Connection conn = new DatabaseConnection().getConnection()) {
             String sql = "SELECT MaNhanVien, HoTen, SoDienThoai, DiaChi, NgayVaoLam FROM NhanVien WHERE ID_TaiKhoan = ?";
@@ -51,23 +54,34 @@ public class pnlNhanVien extends javax.swing.JPanel {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                Object[] row = {
-                    rs.getString("MaNhanVien"),
-                    rs.getString("HoTen"),
-                    rs.getString("SoDienThoai"),
-                    rs.getString("DiaChi"),
-                    rs.getString("NgayVaoLam")
-                };
+                String maNhanVien = rs.getString("MaNhanVien");
+                String hoTen = rs.getString("HoTen");
+                String soDienThoai = rs.getString("SoDienThoai");
+                String diaChi = rs.getString("DiaChi");
+                Date ngayVaoLam = rs.getDate("NgayVaoLam");
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                String ngayVaoLam1 = sdf.format(ngayVaoLam);
+                
+                Object[] row = {maNhanVien, hoTen, soDienThoai, diaChi, ngayVaoLam1};
                 model.addRow(row);
             }
         } catch (Exception ex) {
             Logger.getLogger(pnlNhanVien.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(this, "Không thể tải dữ liệu từ cơ sở dữ liệu!");
+            JOptionPane.showMessageDialog(this, "Không thể tải dữ liệu từ cơ sở dữ liệu 1!");
         }
     }
     
     public pnlNhanVien(TaiKhoan taiKhoan){
         initComponents();
+        this.taiKhoan = taiKhoan;
+        
+        DefaultTableModel model = new DefaultTableModel();
+        tblNhanVien.setModel(model);
+        model.addColumn("Mã nhân viên");
+        model.addColumn("Họ tên");
+        model.addColumn("Số điện thoại");
+        model.addColumn("Địa chỉ");
+        model.addColumn("Ngày vào làm");
         
         // Thêm DocumentListener cho ô tìm kiếm
         txtTimKiem.getDocument().addDocumentListener(new DocumentListener() {
@@ -199,8 +213,15 @@ public class pnlNhanVien extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnThemNhanVienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemNhanVienActionPerformed
-        new NV_Them(taiKhoan).setVisible(true);
-        loadTableData(taiKhoan);
+        NV_Them themForm = new NV_Them(taiKhoan);
+        themForm.setVisible(true);
+        
+        themForm.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosed(java.awt.event.WindowEvent e) {
+                loadTableData(taiKhoan);
+            }
+        });
     }//GEN-LAST:event_btnThemNhanVienActionPerformed
 
     private void btnSuaNhanVienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuaNhanVienActionPerformed
@@ -215,8 +236,15 @@ public class pnlNhanVien extends javax.swing.JPanel {
         String hoTen = tblNhanVien.getValueAt(selectedRow, 1).toString();
         String soDienThoai = tblNhanVien.getValueAt(selectedRow, 2).toString();
         String diaChi = tblNhanVien.getValueAt(selectedRow, 3).toString();
-        String ngayVaoLam = tblNhanVien.getValueAt(selectedRow, 4).toString();
-
+        String ngayVaoLam1 = tblNhanVien.getValueAt(selectedRow, 4).toString();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Date ngayVaoLam = null;
+        try {
+            ngayVaoLam = sdf.parse(ngayVaoLam1);
+        } catch (ParseException ex) {
+            Logger.getLogger(pnlNhanVien.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         NV_Sua suaForm = new NV_Sua(taiKhoan, maNV, hoTen, soDienThoai, diaChi, ngayVaoLam);
         suaForm.setVisible(true);
         

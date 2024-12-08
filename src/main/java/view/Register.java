@@ -100,7 +100,7 @@ public class Register extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(111, 111, 111)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(125, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -108,7 +108,7 @@ public class Register extends javax.swing.JFrame {
         );
 
         lbNhapLaiMatKhau_TaiKhoan.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        lbNhapLaiMatKhau_TaiKhoan.setText("Nhập lại mật khẩu:");
+        lbNhapLaiMatKhau_TaiKhoan.setText("Xác nhận mật khẩu:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -133,21 +133,17 @@ public class Register extends javax.swing.JFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(lbTen_TaiKhoan)
                                     .addComponent(lbMatKhau_TaiKhoan, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(35, 35, 35)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(18, 18, 18)
-                                        .addComponent(txtMatKhau_TaiKhoan))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(19, 19, 19)
-                                        .addComponent(txtTen_TaiKhoan))))
+                                    .addComponent(txtMatKhau_TaiKhoan)
+                                    .addComponent(txtTen_TaiKhoan)))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(lbNhapLaiMatKhau_TaiKhoan)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGap(18, 18, 18)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(rdHienthi_MatKhau)
-                                        .addGap(0, 0, Short.MAX_VALUE))
-                                    .addComponent(txtNhapLaiMatKhau_TaiKhoan))))))
+                                    .addComponent(rdHienthi_MatKhau)
+                                    .addComponent(txtNhapLaiMatKhau_TaiKhoan, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addGap(70, 70, 70))
         );
         layout.setVerticalGroup(

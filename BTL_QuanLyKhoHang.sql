@@ -69,6 +69,16 @@ begin
 	inner join deleted on HangHoa.MaHang = deleted.MaHang
 end
 
+create trigger insert_SoLuongNhap_SoLuongTon on PhieuNhap
+after insert
+as
+begin
+	update HangHoa
+	set SoLuongTon = SoLuongTon + inserted.SoLuongNhap
+	from HangHoa
+	inner join inserted on HangHoa.MaHang = inserted.MaHang
+end
+
 create trigger update_SoLuongXuat_SoLuongTon on PhieuXuat
 after update
 as
@@ -78,6 +88,16 @@ begin
 	from HangHoa
 	inner join inserted on HangHoa.MaHang = inserted.MaHang
 	inner join deleted on HangHoa.MaHang = deleted.MaHang
+end
+
+create trigger insert_SoLuongXuat_SoLuongTon on PhieuXuat
+after insert
+as
+begin
+	update HangHoa
+	set SoLuongTon = SoLuongTon - inserted.SoLuongXuat
+	from HangHoa
+	inner join inserted on HangHoa.MaHang = inserted.MaHang
 end
 
 create trigger tinh_ThanhTien on PhieuXuat

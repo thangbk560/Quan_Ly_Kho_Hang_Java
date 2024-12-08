@@ -8,6 +8,8 @@ import controller.DatabaseConnection;
 import java.sql.*;
 import javax.swing.*;
 import model.TaiKhoan;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 /**
  *
@@ -24,10 +26,11 @@ public class NV_Sua extends javax.swing.JFrame {
     private String hoTen;
     private String soDienThoai;
     private String diaChi;
-    private String ngayVaoLam;
+    private Date ngayVaoLam;
 
-    public NV_Sua(TaiKhoan taiKhoan, String maNV, String hoTen, String soDienThoai, String diaChi, String ngayVaoLam) {
+    public NV_Sua(TaiKhoan taiKhoan, String maNV, String hoTen, String soDienThoai, String diaChi, Date ngayVaoLam) {
          // Lưu giá trị ban đầu
+        this.taiKhoan = taiKhoan;
         this.maNV = maNV;
         this.hoTen = hoTen;
         this.soDienThoai = soDienThoai;
@@ -42,7 +45,9 @@ public class NV_Sua extends javax.swing.JFrame {
         txtHoTen.setText(hoTen);
         txtSoDienThoai.setText(soDienThoai);
         txtDiaChi.setText(diaChi);
-        txtNgayVaoLam.setText(ngayVaoLam);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        String ngayVaoLam1 = sdf.format(ngayVaoLam);
+        txtNgayVaoLam.setText(ngayVaoLam1);
     }
 
 
@@ -178,6 +183,15 @@ public class NV_Sua extends javax.swing.JFrame {
         String soDienThoai1 = txtSoDienThoai.getText();
         String diaChi1 = txtDiaChi.getText();
         String ngayVaoLam1 = txtNgayVaoLam.getText();
+        
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Date ngayVaoLam2 = null;
+        try {
+            ngayVaoLam2 = sdf.parse(ngayVaoLam1);  // Chuyển chuỗi thành java.util.Date
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        java.sql.Date ngayVaoLam3 = new java.sql.Date(ngayVaoLam2.getTime());
 
         try (Connection conn = new DatabaseConnection().getConnection()) {
             String sql = "UPDATE NhanVien SET HoTen = ?, SoDienThoai = ?, DiaChi = ?, NgayVaoLam = ? WHERE MaNhanVien = ? AND ID_TaiKhoan = ?";
@@ -185,7 +199,7 @@ public class NV_Sua extends javax.swing.JFrame {
             ps.setString(1, hoTen1);
             ps.setString(2, soDienThoai1);
             ps.setString(3, diaChi1);
-            ps.setString(4, ngayVaoLam1);
+            ps.setDate(4, ngayVaoLam3);
             ps.setString(5, maNV);
             ps.setInt(6, taiKhoan.getID_TaiKhoan());
 
@@ -201,7 +215,9 @@ public class NV_Sua extends javax.swing.JFrame {
         txtHoTen.setText(hoTen);
         txtSoDienThoai.setText(soDienThoai);
         txtDiaChi.setText(diaChi);
-        txtNgayVaoLam.setText(ngayVaoLam);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        String ngayVaoLam1 = sdf.format(ngayVaoLam);
+        txtNgayVaoLam.setText(ngayVaoLam1);
     }//GEN-LAST:event_btnDatLaiActionPerformed
 
     private void btnThoatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThoatActionPerformed

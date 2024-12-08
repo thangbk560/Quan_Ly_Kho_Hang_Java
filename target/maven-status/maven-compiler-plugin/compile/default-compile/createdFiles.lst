@@ -37,10 +37,12 @@ view\pnlPhieuXuat$5.class
 controller\DatabaseConnection.class
 view\pnlHangHoa$3.class
 view\NV_Them$1.class
+view\pnlPhieuNhap$7.class
 view\PN_Sua$4.class
 view\TrangChu$4.class
 view\PN_Sua.class
 view\pnlPhieuXuat.class
+view\tblHangHoa.class
 view\pnlPhieuXuat$6.class
 view\NV_Sua$3.class
 view\pnlViTriHangHoa$2.class
@@ -49,11 +51,14 @@ view\HH_Sua$4.class
 model\TaiKhoan.class
 view\HH_Them$4.class
 view\PX_Sua$1.class
+view\pnlPhieuXuat$7.class
 main\Main$1.class
 view\pnlHangHoa$4.class
 view\pnlNhanVien$4.class
+view\pnlHangHoa$7.class
 view\pnlPhieuNhap$4.class
 view\PX_Sua$4.class
+view\pnlNhanVien$7.class
 view\pnlHangHoa$1.class
 model\NhanVien.class
 view\NV_Sua.class
@@ -94,6 +99,7 @@ view\TrangChu$1.class
 view\PN_Sua$1.class
 view\PX_Sua.class
 view\HH_Sua$1.class
+view\pnlViTriHangHoa$5.class
 view\PN_Them$2.class
 view\NV_Them$4.class
 view\pnlNhanVien$3.class

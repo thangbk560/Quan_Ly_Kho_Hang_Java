@@ -31,6 +31,7 @@ public class HH_Sua extends javax.swing.JFrame {
 
     public HH_Sua(TaiKhoan taiKhoan, String maHH, String tenHH, int soluongTon, String donviTinh, float donGia, String moTa, String nhaSanXuat) {
          // Lưu giá trị ban đầu
+        this.taiKhoan = taiKhoan;
         this.maHH = maHH;
         this.tenHH = tenHH;
         this.soluongTon = soluongTon;
@@ -80,7 +81,6 @@ public class HH_Sua extends javax.swing.JFrame {
         btnThoat = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(400, 240));
 
         btnDatLai.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnDatLai.setText("Đặt lại");

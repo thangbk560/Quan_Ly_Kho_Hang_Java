@@ -6,12 +6,15 @@ package view;
 
 import controller.DatabaseConnection;
 import java.sql.*;
+import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
 import model.TaiKhoan;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 /**
  *
@@ -45,31 +48,44 @@ public class pnlPhieuXuat extends javax.swing.JPanel {
         model.setRowCount(0); // Xóa dữ liệu cũ trên bảng
 
         try (Connection conn = new DatabaseConnection().getConnection()) {
-            String sql = "SELECT MaPhieuXuat, NgayXuat, MaNhanVien, KhachHang, MaHang, SoLuongXuat, ThanhTien FROM PhieuNhap WHERE ID_TaiKhoan = ?";
+            String sql = "SELECT MaPhieuXuat, NgayXuat, MaNhanVien, KhachHang, MaHang, SoLuongXuat, ThanhTien FROM PhieuXuat WHERE ID_TaiKhoan = ?";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, taiKhoan.getID_TaiKhoan());
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                Object[] row = {
-                    rs.getString("MaPhieuXuat"),
-                    rs.getString("NgayXuat"),
-                    rs.getString("MaNhanVien"),
-                    rs.getString("KhachHang"),
-                    rs.getString("MaHang"),
-                    rs.getString("SoLuongXuat"),
-                    rs.getString("ThanhTien")
-                };
+                String maPhieu = rs.getString("MaPhieuXuat");
+                Date ngayXuat = rs.getDate("NgayXuat");
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                String ngayXuat1 = sdf.format(ngayXuat);
+                String maNhanVien = rs.getString("MaNhanVien");
+                String khachHang = rs.getString("KhachHang");
+                String maHang = rs.getString("MaHang");
+                int soLuongXuat = rs.getInt("SoLuongXuat");
+                float thanhTien = rs.getFloat("ThanhTien");
+                
+                Object[] row = {maPhieu, ngayXuat1, maNhanVien, khachHang, maHang, soLuongXuat, thanhTien};
                 model.addRow(row);
             }
         } catch (Exception ex) {
             Logger.getLogger(pnlNhanVien.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(this, "Không thể tải dữ liệu từ cơ sở dữ liệu!");
+            JOptionPane.showMessageDialog(this, "Không thể tải dữ liệu từ cơ sở dữ liệu 4!");
         }
     }
     
     public pnlPhieuXuat(TaiKhoan taiKhoan){
         initComponents();
+        this.taiKhoan = taiKhoan;
+        
+        DefaultTableModel model = new DefaultTableModel();
+        tblPhieuXuat.setModel(model);
+        model.addColumn("Mã phiếu");
+        model.addColumn("Ngày xuất");
+        model.addColumn("Mã nhân viên");
+        model.addColumn("Khách hàng");
+        model.addColumn("Mã hàng");
+        model.addColumn("Số lượng xuất");
+        model.addColumn("Thành tiền");
         
         // Thêm DocumentListener cho ô tìm kiếm
         txtTimKiem.getDocument().addDocumentListener(new DocumentListener() {
@@ -204,8 +220,15 @@ public class pnlPhieuXuat extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnThemPhieuXuatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemPhieuXuatActionPerformed
-        new PX_Them(taiKhoan).setVisible(true);
-        loadTableData(taiKhoan);
+        PX_Them themForm = new PX_Them(taiKhoan);
+        themForm.setVisible(true);
+        
+        themForm.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosed(java.awt.event.WindowEvent e) {
+                loadTableData(taiKhoan);
+            }
+        });
     }//GEN-LAST:event_btnThemPhieuXuatActionPerformed
 
     private void btnSuaPhieuXuatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuaPhieuXuatActionPerformed
@@ -217,11 +240,19 @@ public class pnlPhieuXuat extends javax.swing.JPanel {
 
         // Lấy thông tin
         String phieuXuat = tblPhieuXuat.getValueAt(selectedRow, 0).toString();
-        String ngayXuat = tblPhieuXuat.getValueAt(selectedRow, 1).toString();
+        String ngayXuat1 = tblPhieuXuat.getValueAt(selectedRow, 1).toString();
         String maNhanVien = tblPhieuXuat.getValueAt(selectedRow, 2).toString();
         String khachhang= tblPhieuXuat.getValueAt(selectedRow, 3).toString();
         String maHang = tblPhieuXuat.getValueAt(selectedRow, 4).toString();
-        int soluongXuat = Integer.parseInt(tblPhieuXuat.getValueAt(selectedRow, 2).toString());
+        int soluongXuat = Integer.parseInt(tblPhieuXuat.getValueAt(selectedRow, 5).toString());
+        
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Date ngayXuat = null;
+        try {
+            ngayXuat = sdf.parse(ngayXuat1);
+        } catch (ParseException ex) {
+            Logger.getLogger(pnlPhieuNhap.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         PX_Sua suaForm = new PX_Sua(taiKhoan, phieuXuat, ngayXuat, maNhanVien, khachhang, maHang, soluongXuat);
         suaForm.setVisible(true);
@@ -255,13 +286,6 @@ public class pnlPhieuXuat extends javax.swing.JPanel {
                 ps.setString(2, maNV);
                 ps.setString(3, maHH);
                 ps.setInt(4, taiKhoan.getID_TaiKhoan());
-                ps.executeUpdate();
-                
-                
-                sql = "UPDATE HangHoa SET SoLuongTon = SoLuongTon + ? WHERE MaHang = ? AND ID_TaiKhoan = ?";
-                ps.setInt(1, soluongXuat);
-                ps.setString(2, maHH);
-                ps.setInt(3, taiKhoan.getID_TaiKhoan());
                 ps.executeUpdate();
 
                 JOptionPane.showMessageDialog(this, "Xóa thành công!");

@@ -196,7 +196,7 @@ public class Login extends javax.swing.JFrame {
                     TaiKhoan taiKhoan = new TaiKhoan();
                     taiKhoan.setID_TaiKhoan(rs.getInt("ID_TaiKhoan"));
                     new TrangChu(taiKhoan).setVisible(true);
-                    this.dispose();                   
+                    this.dispose();
                 }
                 else{
                     JOptionPane.showMessageDialog(this, "Đăng nhập không thành công, vui lòng đăng nhập lại!", "Message", JOptionPane.ERROR_MESSAGE);

@@ -31,6 +31,7 @@ public class pnlViTriHangHoa extends javax.swing.JPanel {
     
     public pnlViTriHangHoa(TaiKhoan taiKhoan) {
         initComponents();
+        this.taiKhoan = taiKhoan;
     }
     
     private boolean KiemTra() {
@@ -41,13 +42,25 @@ public class pnlViTriHangHoa extends javax.swing.JPanel {
             ps.setString(1, maHH);
             ps.setInt(2, taiKhoan.getID_TaiKhoan());
             ResultSet rs = ps.executeQuery();
-            
+
             if (rs.next()) {
                 txtMaKe.setText(rs.getString("MaKe"));
                 txtTenKe.setText(rs.getString("TenKe"));
                 txtTang.setText(rs.getString("Tang"));
                 txtNgan.setText(rs.getString("Ngan"));
+
+                // Kích hoạt các nút sửa và xóa
+                btnSua.setEnabled(true);
+                btnXoa.setEnabled(true);
+                btnThem.setEnabled(false);
                 return true;
+            } else {
+                // Khóa các nút sửa và xóa, chỉ cho phép thêm
+                JOptionPane.showMessageDialog(this, "Hàng hóa chưa được sắp xếp trong kho!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                clearFields();
+                btnSua.setEnabled(false);
+                btnXoa.setEnabled(false);
+                btnThem.setEnabled(true);
             }
         } catch (Exception ex) {
             Logger.getLogger(pnlNhanVien.class.getName()).log(Level.SEVERE, null, ex);
@@ -57,7 +70,6 @@ public class pnlViTriHangHoa extends javax.swing.JPanel {
     }
     
     private void clearFields() {
-        txtMaHang.setText("");
         txtMaKe.setText("");
         txtTenKe.setText("");
         txtTang.setText("");
@@ -91,6 +103,12 @@ public class pnlViTriHangHoa extends javax.swing.JPanel {
         setPreferredSize(new java.awt.Dimension(800, 433));
 
         jLabel1.setText("Mã hàng hóa:");
+
+        txtMaHang.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtMaHangActionPerformed(evt);
+            }
+        });
 
         jLabel2.setText("Mã kệ:");
 
@@ -138,7 +156,7 @@ public class pnlViTriHangHoa extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(272, 272, 272)
+                .addGap(284, 284, 284)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(btnDangXuat, javax.swing.GroupLayout.PREFERRED_SIZE, 256, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
@@ -148,27 +166,27 @@ public class pnlViTriHangHoa extends javax.swing.JPanel {
                         .addGap(18, 18, 18)
                         .addComponent(btnXoa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtTang)
-                            .addComponent(txtTenKe, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)))
+                            .addComponent(txtTang, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                            .addComponent(txtTenKe)))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(txtNgan, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtNgan))
                         .addGroup(layout.createSequentialGroup()
                             .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                             .addComponent(txtMaKe))
                         .addGroup(layout.createSequentialGroup()
-                            .addComponent(jLabel1)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                             .addComponent(txtMaHang, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(0, 272, Short.MAX_VALUE))
+                .addGap(0, 260, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -214,21 +232,20 @@ public class pnlViTriHangHoa extends javax.swing.JPanel {
     }//GEN-LAST:event_btnDangXuatActionPerformed
 
     private void btnThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemActionPerformed
-        if (KiemTra() == false) {
-            maHH = txtMaHang.getText().trim();
-            maKe = txtMaKe.getText().trim();
-            tenKe = txtTenKe.getText().trim();
-            tang = txtTang.getName().trim();
-            ngan = txtNgan.getText().trim();
-            idTaiKhoan = taiKhoan.getID_TaiKhoan();
-        }
-        
+        maHH = txtMaHang.getText().trim();
+        maKe = txtMaKe.getText().trim();
+        tenKe = txtTenKe.getText().trim();
+        tang = txtTang.getText().trim();
+        ngan = txtNgan.getText().trim();
+        idTaiKhoan = taiKhoan.getID_TaiKhoan();
+
         if (maHH.isEmpty() || maKe.isEmpty() || tenKe.isEmpty() || tang.isEmpty() || ngan.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Vui lòng điền đầy đủ thông tin.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
         }
-        
+
         String sql = "INSERT INTO QuanLyKho (MaHang, MaKe, TenKe, Tang, Ngan, ID_TaiKhoan) VALUES (?, ?, ?, ?, ?, ?)";
-        
+
         try (Connection conn = new DatabaseConnection().getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, maHH);
             ps.setString(2, maKe);
@@ -239,29 +256,32 @@ public class pnlViTriHangHoa extends javax.swing.JPanel {
 
             int rowsInserted = ps.executeUpdate();
             if (rowsInserted > 0) {
-                ps.executeUpdate();
-                JOptionPane.showMessageDialog(this, "Thêm phiếu nhập thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-                clearFields(); // Xóa nội dung các trường nhập liệu sau khi thêm thành công
+                JOptionPane.showMessageDialog(this, "Thêm thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                clearFields();
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Lỗi khi thêm phiếu nhập: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Lỗi khi thêm: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnThemActionPerformed
 
     private void btnSuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuaActionPerformed
-        if (KiemTra() == true) {
-            try (Connection conn = new DatabaseConnection().getConnection()) {
-            String sql = "UPDATE QuanLyKho SET MaKe = ?, TenKe = ?, Tang = ?, Ngan = ? WHERE MaHang = ? AND ID_TaiKhoan = ?";
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, maKe);
-            ps.setString(2, tenKe);
-            ps.setString(3, tang);
-            ps.setString(4, ngan);
-            ps.setString(5, maHH);
-            ps.setInt(6, taiKhoan.getID_TaiKhoan());
+        if (KiemTra()) {
+            maKe = txtMaKe.getText().trim();
+            tenKe = txtTenKe.getText().trim();
+            tang = txtTang.getText().trim();
+            ngan = txtNgan.getText().trim();
 
-            ps.executeUpdate();
-            JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
+            String sql = "UPDATE QuanLyKho SET MaKe = ?, TenKe = ?, Tang = ?, Ngan = ? WHERE MaHang = ? AND ID_TaiKhoan = ?";
+            try (Connection conn = new DatabaseConnection().getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, maKe);
+                ps.setString(2, tenKe);
+                ps.setString(3, tang);
+                ps.setString(4, ngan);
+                ps.setString(5, maHH);
+                ps.setInt(6, taiKhoan.getID_TaiKhoan());
+
+                ps.executeUpdate();
+                JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Cập nhật thất bại! " + ex.getMessage());
             }
@@ -269,10 +289,9 @@ public class pnlViTriHangHoa extends javax.swing.JPanel {
     }//GEN-LAST:event_btnSuaActionPerformed
 
     private void btnXoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaActionPerformed
-        if (KiemTra() == true){
-            try (Connection conn = new DatabaseConnection().getConnection()) {
-                String sql = "DELETE FROM QuanLyKho WHERE MaHang = ? AND ID_TaiKhoan = ?";
-                PreparedStatement ps = conn.prepareStatement(sql);
+        if (KiemTra()) {
+            String sql = "DELETE FROM QuanLyKho WHERE MaHang = ? AND ID_TaiKhoan = ?";
+            try (Connection conn = new DatabaseConnection().getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setString(1, maHH);
                 ps.setInt(2, taiKhoan.getID_TaiKhoan());
                 ps.executeUpdate();
@@ -285,6 +304,10 @@ public class pnlViTriHangHoa extends javax.swing.JPanel {
             }
         }
     }//GEN-LAST:event_btnXoaActionPerformed
+
+    private void txtMaHangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMaHangActionPerformed
+        KiemTra();
+    }//GEN-LAST:event_txtMaHangActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -43,6 +43,8 @@ public class TrangChu extends javax.swing.JFrame {
         pnlMain.add(panel3, "PhieuNhap");
         pnlMain.add(panel4, "PhieuXuat");
         pnlMain.add(panel5, "ViTriHangHoa");
+        
+        cardLayout.show(pnlMain, "NhanVien");
     }
 
     /**
@@ -157,6 +159,7 @@ public class TrangChu extends javax.swing.JFrame {
 
     private void mnHangHoaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mnHangHoaMouseClicked
         cardLayout.show(pnlMain, "HangHoa");
+        panel2.capnhatTable();
     }//GEN-LAST:event_mnHangHoaMouseClicked
 
     private void mnViTiHangHoaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mnViTiHangHoaMouseClicked

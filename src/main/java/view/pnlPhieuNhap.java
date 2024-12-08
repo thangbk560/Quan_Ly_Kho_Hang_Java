@@ -6,12 +6,15 @@ package view;
 
 import controller.DatabaseConnection;
 import java.sql.*;
+import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
 import model.TaiKhoan;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 /**
  *
@@ -51,24 +54,36 @@ public class pnlPhieuNhap extends javax.swing.JPanel {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                Object[] row = {
-                    rs.getString("MaPhieuNhap"),
-                    rs.getString("NgayNhap"),
-                    rs.getString("MaNhanVien"),
-                    rs.getString("NhaCungCap"),
-                    rs.getString("MaHang"),
-                    rs.getString("SoLuongNhap")
-                };
+                String maPhieu = rs.getString("MaPhieuNhap");
+                Date ngayNhap = rs.getDate("NgayNhap");
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                String ngayNhap1 = sdf.format(ngayNhap);
+                String maNhanVien = rs.getString("MaNhanVien");
+                String nhaCungCap = rs.getString("NhaCungCap");
+                String maHang = rs.getString("MaHang");
+                int soLuongNhap = rs.getInt("SoLuongNhap");
+                
+                Object[] row = {maPhieu, ngayNhap1, maNhanVien, nhaCungCap, maHang, soLuongNhap};
                 model.addRow(row);
             }
         } catch (Exception ex) {
             Logger.getLogger(pnlNhanVien.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(this, "Không thể tải dữ liệu từ cơ sở dữ liệu!");
+            JOptionPane.showMessageDialog(this, "Không thể tải dữ liệu từ cơ sở dữ liệu 3!");
         }
     }
     
     public pnlPhieuNhap(TaiKhoan taiKhoan){
         initComponents();
+        this.taiKhoan = taiKhoan;
+        
+        DefaultTableModel model = new DefaultTableModel();
+        tblPhieuNhap.setModel(model);
+        model.addColumn("Mã phiếu");
+        model.addColumn("Ngày nhập");
+        model.addColumn("Mã nhân viên");
+        model.addColumn("Nhà cung cấp");
+        model.addColumn("Mã hàng");
+        model.addColumn("Số lượng nhập");
         
         // Thêm DocumentListener cho ô tìm kiếm
         txtTimKiem.getDocument().addDocumentListener(new DocumentListener() {
@@ -200,8 +215,15 @@ public class pnlPhieuNhap extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnThemPhieuNhapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemPhieuNhapActionPerformed
-        new PN_Them(taiKhoan).setVisible(true);
-        loadTableData(taiKhoan);
+        PN_Them themForm = new PN_Them(taiKhoan);
+        themForm.setVisible(true);
+        
+        themForm.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosed(java.awt.event.WindowEvent e) {
+                loadTableData(taiKhoan);
+            }
+        });
     }//GEN-LAST:event_btnThemPhieuNhapActionPerformed
 
     private void btnSuaPhieuNhapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuaPhieuNhapActionPerformed
@@ -213,11 +235,19 @@ public class pnlPhieuNhap extends javax.swing.JPanel {
 
         // Lấy thông tin
         String phieuNhap = tblPhieuNhap.getValueAt(selectedRow, 0).toString();
-        String ngayNhap = tblPhieuNhap.getValueAt(selectedRow, 1).toString();
+        String ngayNhap1 = tblPhieuNhap.getValueAt(selectedRow, 1).toString();
         String maNhanVien = tblPhieuNhap.getValueAt(selectedRow, 2).toString();
         String nhaCungCap= tblPhieuNhap.getValueAt(selectedRow, 3).toString();
         String maHang = tblPhieuNhap.getValueAt(selectedRow, 4).toString();
-        int soluongNhap = Integer.parseInt(tblPhieuNhap.getValueAt(selectedRow, 2).toString());
+        int soluongNhap = Integer.parseInt(tblPhieuNhap.getValueAt(selectedRow, 5).toString());
+        
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Date ngayNhap = null;
+        try {
+            ngayNhap = sdf.parse(ngayNhap1);
+        } catch (ParseException ex) {
+            Logger.getLogger(pnlPhieuNhap.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         PN_Sua suaForm = new PN_Sua(taiKhoan, phieuNhap, ngayNhap, maNhanVien, nhaCungCap, maHang, soluongNhap);
         suaForm.setVisible(true);
@@ -251,13 +281,6 @@ public class pnlPhieuNhap extends javax.swing.JPanel {
                 ps.setString(2, maNV);
                 ps.setString(3, maHH);
                 ps.setInt(4, taiKhoan.getID_TaiKhoan());
-                ps.executeUpdate();
-                
-                
-                sql = "UPDATE HangHoa SET SoLuongTon = SoLuongTon - ? WHERE MaHang = ? AND ID_TaiKhoan = ?";
-                ps.setInt(1, soluongNhap);
-                ps.setString(2, maHH);
-                ps.setInt(3, taiKhoan.getID_TaiKhoan());
                 ps.executeUpdate();
 
                 JOptionPane.showMessageDialog(this, "Xóa thành công!");

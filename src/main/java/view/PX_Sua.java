@@ -8,6 +8,8 @@ import controller.DatabaseConnection;
 import java.sql.*;
 import javax.swing.JOptionPane;
 import model.TaiKhoan;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 /**
  *
@@ -22,14 +24,15 @@ public class PX_Sua extends javax.swing.JFrame {
     
     private TaiKhoan taiKhoan;
     private String maPhieu;
-    private String ngayXuat;
+    private Date ngayXuat;
     private String maNhanVien;
     private String khachhang;
     private String maHangHoa;
     private int soluongXuat;
 
-    public PX_Sua(TaiKhoan taiKhoan, String maPhieu, String ngayXuat, String maNhanVien, String khachhang, String maHangHoa, int soluongXuat) {
+    public PX_Sua(TaiKhoan taiKhoan, String maPhieu, Date ngayXuat, String maNhanVien, String khachhang, String maHangHoa, int soluongXuat) {
          // Lưu giá trị ban đầu
+        this.taiKhoan = taiKhoan;
         this.maPhieu = maPhieu;
         this.ngayXuat = ngayXuat;
         this.maNhanVien = maNhanVien;
@@ -42,7 +45,9 @@ public class PX_Sua extends javax.swing.JFrame {
         // Hiển thị thông tin trên các trường
         txtMaPhieu.setText(maPhieu);
         txtMaPhieu.setEditable(false);
-        txtNgayXuat.setText(ngayXuat);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        String ngayXuat1 = sdf.format(ngayXuat);
+        txtNgayXuat.setText(ngayXuat1);
         txtMaNhanVien.setText(maNhanVien);
         txtKhachHang.setText(khachhang);
         txtMaHangHoa.setText(maHangHoa);
@@ -194,11 +199,20 @@ public class PX_Sua extends javax.swing.JFrame {
         String khachhang1 = txtKhachHang.getText();
         String maHangHoa1 = txtMaHangHoa.getText();
         int soLuongXuat1 = Integer.parseInt(txtSoLuongXuat.getText());
+        
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Date ngayXuat2 = null;
+        try {
+            ngayXuat2 = sdf.parse(ngayXuat1);  // Chuyển chuỗi thành java.util.Date
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        java.sql.Date ngayXuat3 = new java.sql.Date(ngayXuat2.getTime());
 
         try (Connection conn = new DatabaseConnection().getConnection()) {
             String sql = "UPDATE PhieuXuat SET NgayXuat = ?, MaNhanVien = ?, KhachHang = ?, MaHang = ?, SoLuongXuat = ? WHERE MaPhieuXuat = ? AND ID_TaiKhoan = ?";
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, ngayXuat1);
+            ps.setDate(1, ngayXuat3);
             ps.setString(2, maNhanVien1);
             ps.setString(3, khachhang1);
             ps.setString(4, maHangHoa1);
@@ -215,8 +229,10 @@ public class PX_Sua extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSuaActionPerformed
 
     private void btnDatLaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDatLaiActionPerformed
-        txtNgayXuat.setText(ngayXuat);
-        txtMaNhanVien.setText(String.valueOf(maNhanVien));
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        String ngayXuat1 = sdf.format(ngayXuat);
+        txtNgayXuat.setText(ngayXuat1);
+        txtMaNhanVien.setText(maNhanVien);
         txtKhachHang.setText(khachhang);
         txtMaHangHoa.setText(maHangHoa);
         txtSoLuongXuat.setText(String.valueOf(soluongXuat));

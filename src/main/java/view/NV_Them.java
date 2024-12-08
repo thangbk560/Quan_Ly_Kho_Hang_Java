@@ -8,6 +8,8 @@ import controller.DatabaseConnection;
 import java.sql.*;
 import javax.swing.*;
 import model.TaiKhoan;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 /**
  *
@@ -23,6 +25,7 @@ public class NV_Them extends javax.swing.JFrame {
     
     public NV_Them(TaiKhoan taiKhoan) {
         initComponents();
+        this.taiKhoan = taiKhoan;
     }
     
     private void clearFields() {
@@ -167,6 +170,15 @@ public class NV_Them extends javax.swing.JFrame {
         String ngayVaoLam = txtNgayVaoLam.getText().trim();
         int idTaiKhoan = taiKhoan.getID_TaiKhoan();
 
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Date ngayVaoLam1 = null;
+        try {
+            ngayVaoLam1 = sdf.parse(ngayVaoLam);  // Chuyển chuỗi thành java.util.Date
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        java.sql.Date ngayVaoLam2 = new java.sql.Date(ngayVaoLam1.getTime());
+        
         if (maNhanVien.isEmpty() || hoTen.isEmpty() || soDienThoai.isEmpty() || diaChi.isEmpty() || ngayVaoLam.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Vui lòng điền đầy đủ thông tin.", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
@@ -179,7 +191,7 @@ public class NV_Them extends javax.swing.JFrame {
             ps.setString(2, hoTen);
             ps.setString(3, soDienThoai);
             ps.setString(4, diaChi);
-            ps.setString(5, ngayVaoLam);
+            ps.setDate(5, ngayVaoLam2);
             ps.setInt(6, idTaiKhoan);
 
             int rowsInserted = ps.executeUpdate();

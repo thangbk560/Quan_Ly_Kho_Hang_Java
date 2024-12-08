@@ -18,7 +18,7 @@ public class NhanVien implements Serializable {
     private String DiaChi;
     private Date NgayVaoLam;
     
-    public NhanVien() {};
+    public NhanVien() {}
     public NhanVien(String MaNV, String HoTen, String SoDienThoai, String DiaChi, Date NgayVaoLam)
     {
         this.MaNhanVien = MaNV;

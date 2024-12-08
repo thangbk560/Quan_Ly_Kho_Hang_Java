@@ -23,6 +23,7 @@ public class HH_Them extends javax.swing.JFrame {
     
     public HH_Them(TaiKhoan taiKhoan) {
         initComponents();
+        this.taiKhoan = taiKhoan;
     }
     
     private void clearFields() {
@@ -190,13 +191,13 @@ public class HH_Them extends javax.swing.JFrame {
         String nhaSanXuat = txtNhaSanXuat.getText().trim();
         int idTaiKhoan = taiKhoan.getID_TaiKhoan();
 
-        if (maHangHoa.isEmpty() || tenHangHoa.isEmpty() || soLuongTon<0 || donViTinh.isEmpty() || donGia<0 || moTa.isEmpty() || nhaSanXuat.isEmpty()) {
+        if (maHangHoa.isEmpty() || tenHangHoa.isEmpty() || soLuongTon<=0 || donViTinh.isEmpty() || donGia<=0 || moTa.isEmpty() || nhaSanXuat.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Vui lòng điền đầy đủ thông tin.", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         String sql = "INSERT INTO HangHoa (MaHang, TenHang, SoLuongTon, DonViTinh, DonGia, MoTa, NhaSanXuat, ID_TaiKhoan) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-
+        
         try (Connection conn = new DatabaseConnection().getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, maHangHoa);
             ps.setString(2, tenHangHoa);
@@ -206,6 +207,11 @@ public class HH_Them extends javax.swing.JFrame {
             ps.setString(6, moTa);
             ps.setString(7, nhaSanXuat);
             ps.setInt(8, idTaiKhoan);
+            if (conn != null) {
+                System.out.println("Kết nối thành công!");
+            } else {
+                System.out.println("Kết nối thất bại!");
+            }
 
             int rowsInserted = ps.executeUpdate();
             if (rowsInserted > 0) {

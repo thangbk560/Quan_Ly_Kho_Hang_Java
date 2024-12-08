@@ -8,6 +8,8 @@ import controller.DatabaseConnection;
 import java.sql.*;
 import javax.swing.JOptionPane;
 import model.TaiKhoan;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 /**
  *
@@ -23,6 +25,7 @@ public class PX_Them extends javax.swing.JFrame {
     
     public PX_Them(TaiKhoan taiKhoan) {
         initComponents();
+        this.taiKhoan = taiKhoan;
     }
     
     private void clearFields() {
@@ -181,6 +184,15 @@ public class PX_Them extends javax.swing.JFrame {
         String maHangHoa = txtMaHangHoa.getText().trim();
         int soluongXuat = Integer.parseInt(txtSoLuongXuat.getText().trim());
         int idTaiKhoan = taiKhoan.getID_TaiKhoan();
+        
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Date ngayXuat1 = null;
+        try {
+            ngayXuat1 = sdf.parse(ngayXuat);  // Chuyển chuỗi thành java.util.Date
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        java.sql.Date ngayXuat2 = new java.sql.Date(ngayXuat1.getTime());
 
         if (maPhieu.isEmpty() || ngayXuat.isEmpty() || maNhanVien.isEmpty() || khachhang.isEmpty() || maHangHoa.isEmpty() || soluongXuat<0) {
             JOptionPane.showMessageDialog(this, "Vui lòng điền đầy đủ thông tin.", "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -191,7 +203,7 @@ public class PX_Them extends javax.swing.JFrame {
 
         try (Connection conn = new DatabaseConnection().getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, maPhieu);
-            ps.setString(2, ngayXuat);
+            ps.setDate(2, ngayXuat2);
             ps.setString(3, maNhanVien);
             ps.setString(4, khachhang);
             ps.setString(5, maHangHoa);
@@ -200,11 +212,6 @@ public class PX_Them extends javax.swing.JFrame {
 
             int rowsInserted = ps.executeUpdate();
             if (rowsInserted > 0) {
-                sql = "UPDATE HangHoa SET SoLuongTon = SoLuongTon - ? WHERE MaHang = ? AND ID_TaiKhoan = ?";
-                ps.setInt(1, soluongXuat);
-                ps.setString(2, maHangHoa);
-                ps.setInt(3, idTaiKhoan);
-                ps.executeUpdate();
                 JOptionPane.showMessageDialog(this, "Thêm phiếu nhập thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                 clearFields(); // Xóa nội dung các trường nhập liệu sau khi thêm thành công
             }

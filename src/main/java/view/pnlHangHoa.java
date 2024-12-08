@@ -25,6 +25,10 @@ public class pnlHangHoa extends javax.swing.JPanel {
     
     private TaiKhoan taiKhoan;
     
+    public void capnhatTable() {
+        loadTableData(taiKhoan);
+    }
+    
     private void filterTable(String query) {
         DefaultTableModel model = (DefaultTableModel) tblHangHoa.getModel();
         TableRowSorter<TableModel> sorter = new TableRowSorter<>(model);
@@ -54,22 +58,23 @@ public class pnlHangHoa extends javax.swing.JPanel {
                 Object[] row = {
                     rs.getString("MaHang"),
                     rs.getString("TenHang"),
-                    rs.getString("SoLuongTon"),
+                    rs.getInt("SoLuongTon"),
                     rs.getString("DonViTinh"),
-                    rs.getString("DonGia"),
+                    rs.getFloat("DonGia"),
                     rs.getString("MoTa"),
                     rs.getString("NhaSanXuat")
                 };
                 model.addRow(row);
             }
         } catch (Exception ex) {
-            Logger.getLogger(pnlNhanVien.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(this, "Không thể tải dữ liệu từ cơ sở dữ liệu!");
+            Logger.getLogger(pnlHangHoa.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, "Không thể tải dữ liệu từ cơ sở dữ liệu 2!");
         }
     }
     
     public pnlHangHoa(TaiKhoan taiKhoan){
         initComponents();
+        this.taiKhoan = taiKhoan;
         
         // Thêm DocumentListener cho ô tìm kiếm
         txtTimKiem.getDocument().addDocumentListener(new DocumentListener() {
@@ -204,8 +209,15 @@ public class pnlHangHoa extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnThemHangHoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemHangHoaActionPerformed
-        new HH_Them(taiKhoan).setVisible(true);
-        loadTableData(taiKhoan);
+        HH_Them themForm = new HH_Them(taiKhoan);
+        themForm.setVisible(true);
+        
+        themForm.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosed(java.awt.event.WindowEvent e) {
+                loadTableData(taiKhoan);
+            }
+        });
     }//GEN-LAST:event_btnThemHangHoaActionPerformed
 
     private void btnSuaHangHoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuaHangHoaActionPerformed
@@ -221,8 +233,8 @@ public class pnlHangHoa extends javax.swing.JPanel {
         int soluongTon = Integer.parseInt(tblHangHoa.getValueAt(selectedRow, 2).toString());
         String donviTinh = tblHangHoa.getValueAt(selectedRow, 3).toString();
         float donGia = Float.parseFloat(tblHangHoa.getValueAt(selectedRow, 4).toString());
-        String moTa = tblHangHoa.getValueAt(selectedRow, 4).toString();
-        String nhaSanXXuat = tblHangHoa.getValueAt(selectedRow, 4).toString();
+        String moTa = tblHangHoa.getValueAt(selectedRow, 5).toString();
+        String nhaSanXXuat = tblHangHoa.getValueAt(selectedRow, 6).toString();
 
         HH_Sua suaForm = new HH_Sua(taiKhoan, maHH, tenHH, soluongTon, donviTinh, donGia, moTa, nhaSanXXuat);
         suaForm.setVisible(true);
